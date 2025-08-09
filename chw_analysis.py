@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 from datetime import datetime
+import os  # added to check file existence
 
 # Configure page settings
 st.set_page_config(
@@ -48,7 +49,11 @@ st.markdown("""
 # Load data function with caching
 @st.cache_data
 def load_data():
-    file_path = r"C:\Users\Dell\Documents\PREM\Python Projects\MCY_STREAMLIT\East_Final.csv"
+    # Use relative path to CSV inside repo
+    file_path = 'East_Final.csv'  # <-- Make sure this CSV is in your repo root folder
+    if not os.path.exists(file_path):
+        st.error(f"File not found: {file_path}. Please add the CSV file to your repo.")
+        return pd.DataFrame()
     try:
         df = pd.read_csv(file_path)
         # Ensure proper datetime columns if needed
@@ -64,7 +69,7 @@ df = load_data()
 
 # Check if data loaded successfully
 if df.empty:
-    st.error("No data loaded. Please check the file path.")
+    st.error("No data loaded. Please check the file path or CSV content.")
     st.stop()
 
 # Create sidebar filters
